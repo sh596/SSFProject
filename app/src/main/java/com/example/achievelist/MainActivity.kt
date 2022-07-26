@@ -1,18 +1,22 @@
 package com.example.achievelist
 
+import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
+import android.util.Log
 import android.widget.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.room.Room
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class MainActivity : AppCompatActivity() {
-    var db : AppDatabase? = null
-    var contactsList = mutableListOf<Contacts>()
-    val adapter = RecyclerViewAdapter(contactsList)
+    private var db: AppDatabase? = null
+    private var contactsList = mutableListOf<Contacts>()
+    @SuppressLint("NotifyDataSetChanged")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -22,29 +26,40 @@ class MainActivity : AppCompatActivity() {
         val radioBtn3 = findViewById<RadioButton>(R.id.radioBtn3)!!
         val addBtn = findViewById<Button>(R.id.mainTODoButton)
         var addEdittext = findViewById<EditText>(R.id.mainToDOEdittext)
-        val recyclerView : RecyclerView = findViewById(R.id.mainToDoRecyclerView)
+        val recyclerView: RecyclerView = findViewById(R.id.mainToDoRecyclerView)
         db = AppDatabase.getInstance(this)
+
+
+        val removeFunction = { c: Contacts -> db!!.contactsDao().delete(c) }
+
+        val readFunction = { Log.d(TAG, "onCreate: ${db!!.contactsDao().getAll().size }")}
+        val adapter = RecyclerViewAdapter(contactsList, removeFunction, readFunction)
 
         val savedContacts = db!!.contactsDao().getAll()
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        if(savedContacts.isNotEmpty())
-        {
+
+        recyclerView.adapter = adapter
+        if (savedContacts.isNotEmpty()) {
             contactsList.addAll(savedContacts)
         }
         addBtn.setOnClickListener {
-            var pr = 1
-            if(radioBtn1.isChecked)
+            var pr = 3
+            if (radioBtn1.isChecked)
+                pr = 0
+            else if (radioBtn2.isChecked)
                 pr = 1
-            else if(radioBtn2.isChecked)
+            else if (radioBtn3.isChecked)
                 pr = 2
-            else if(radioBtn3.isChecked)
-                pr = 3
-            val contact = Contacts(0,addEdittext.text.toString(),pr,false)
-            db?.contactsDao()?.insertAll(contact)
-            contactsList.add(contact)
+            val contact = Contacts(addEdittext.text.toString(), pr, false)
+            runBlocking {
+                db!!.contactsDao().insertAll(contact)
+            }
+            contactsList.clear()
+            runBlocking {
+                contactsList.addAll(db!!.contactsDao().getAll())
+            }
             adapter.notifyDataSetChanged()
         }
-        recyclerView.adapter = adapter
     }
 }

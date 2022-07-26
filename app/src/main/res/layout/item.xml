@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="39dp"
     android:layout_marginTop="12dp"
-    android:layout_marginBottom="12dp">
+    android:layout_marginBottom="12dp"
+    android:background="#f8f8f8">
 
     <CheckBox
         android:id="@+id/checkBoxRecyclerItem"
@@ -50,36 +51,4 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginRight="20dp"
-        android:backgroundTint="#FBE7C6"
-        android:indeterminate="false"
-        android:max="100"
-        android:progressDrawable="@drawable/circle_progressbar"
-        android:progressTint="#edbf41"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/progressBarEdittext"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <View
-        android:id="@+id/deleteView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="#F8F8F8"
-        android:visibility="invisible"/>
-    <EditText
-        android:id="@+id/progressBarEdittext"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="20dp"
-        android:background="@null"
-        android:minWidth="30dp"
-        android:text="0"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/priorityBar"
-        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
